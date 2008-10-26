@@ -127,21 +127,24 @@
       var $f = $('#facebox')
       if ($f.find('.loading').length == 1) return true
       showOverlay()
+      $.facebox.wait()
+      $(document).bind('keydown.facebox', function(e) {
+        if (e.keyCode == 27) $.facebox.close()
+        return true
+      })
+      $(document).trigger('loading.facebox')
+    },
 
+    wait: function() {
+      var $f = $('#facebox')
       $f.find('.content').empty()
       $f.find('.body').children().hide().end().
         append('<div class="loading"><img src="'+$.facebox.settings.imagePath+$.facebox.settings.loadingImage+'"/></div>')
 
       $f.css({
         top:	getPageScroll()[1] + (getPageHeight() / 10),
-        left:	$(window).width() / 2 - 205 
+        left:	$(window).width() / 2 - 205
       }).show()
-
-      $(document).bind('keydown.facebox', function(e) {
-        if (e.keyCode == 27) $.facebox.close()
-        return true
-      })
-      $(document).trigger('loading.facebox')
     },
 
     reveal: function(data, klass) {
@@ -331,6 +334,7 @@
       hideOverlay()
       $('#facebox .loading').remove()
     })
+    $(document).trigger('afterClose.facebox')    
   })
 
 })(jQuery);
