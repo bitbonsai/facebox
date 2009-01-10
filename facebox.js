@@ -85,6 +85,7 @@
     settings: {
       opacity      : 0,
       overlay      : true,
+      modal        : false,
       imageTypes   : [ 'png', 'jpg', 'jpeg', 'gif' ]
     },
 
@@ -123,10 +124,14 @@
       if ($f.find('.loading').length == 1) return true
       showOverlay()
       $.facebox.wait()
-      $(document).bind('keydown.facebox', function(e) {
-        if (e.keyCode == 27) $.facebox.close()
-        return true
-      })
+      if (!$.facebox.settings.modal) {
+        $(document).bind('keydown.facebox', function(e) {
+          if (e.keyCode == 27) {
+            $.facebox.close()
+          }
+          return true
+        })
+      }
       $(document).trigger('loading.facebox')
     },
 
@@ -288,8 +293,10 @@
 
     $('#facebox_overlay').hide().addClass("facebox_overlayBG")
       .css('opacity', $.facebox.settings.opacity)
-      .click(function() { $(document).trigger('close.facebox') })
       .fadeIn(200)
+    if (!$.facebox.settings.modal){
+      $('#facebox_overlay').click(function() { $(document).trigger('close.facebox') })
+    }
     return false
   }
 
