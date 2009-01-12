@@ -140,11 +140,16 @@
       $f.find('.content').empty()
       $f.find('.body').children().hide().end().
         append('<div class="loading"></div>')
+      $.facebox.centralize();
+      $f.show();
+      $(document).trigger('reveal.facebox').trigger('afterReveal.facebox')
+    },
 
-      $f.css({
+    centralize: function(){
+      $('#facebox').css({
         top:	getPageScroll()[1] + (getPageHeight() / 10),
-        left:	$(window).width() / 2 - 205
-      }).show()
+        left: $(window).width() / 2 - ($('#facebox table').width() / 2)
+      })
     },
 
     reveal: function(data, klass) {
