@@ -85,7 +85,7 @@
     settings: {
       opacity      : 0,
       overlay      : true,
-      imagePath    : '/facebox/images/',
+      imagePath    : '/images/facebox/',
       loadingImage : 'loading.gif',
       closeImage   : 'closelabel.gif',
       imageTypes   : [ 'png', 'jpg', 'jpeg', 'gif' ]
