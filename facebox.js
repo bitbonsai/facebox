@@ -84,37 +84,41 @@
     settings: {
       opacity      : 0,
       overlay      : true,
-      loadingImage : '/facebox/loading.gif',
-      closeImage   : '/facebox/closelabel.gif',
-      imageTypes   : [ 'png', 'jpg', 'jpeg', 'gif' ],
-      faceboxHtml  : '\
-    <div id="facebox" style="display:none;"> \
-      <div class="popup"> \
-        <table> \
-          <tbody> \
-            <tr> \
-              <td class="tl"/><td class="b"/><td class="tr"/> \
-            </tr> \
-            <tr> \
-              <td class="b"/> \
-              <td class="body"> \
-                <div class="content"> \
-                </div> \
-                <div class="footer"> \
-                  <a href="#" class="close"> \
-                    <img src="/facebox/closelabel.gif" title="close" class="close_image" /> \
-                  </a> \
-                </div> \
-              </td> \
-              <td class="b"/> \
-            </tr> \
-            <tr> \
-              <td class="bl"/><td class="b"/><td class="br"/> \
-            </tr> \
-          </tbody> \
-        </table> \
-      </div> \
-    </div>'
+      imagePath    : '/facebox/images/',
+      loadingImage : 'loading.gif',
+      closeImage   : 'closelabel.gif',
+      imageTypes   : [ 'png', 'jpg', 'jpeg', 'gif' ]
+    },
+
+    html : function(){
+      return '\
+<div id="facebox" style="display:none;"> \
+  <div class="popup"> \
+    <table> \
+      <tbody> \
+        <tr> \
+          <td class="tl"/><td class="b"/><td class="tr"/> \
+        </tr> \
+        <tr> \
+          <td class="b"/> \
+          <td class="body"> \
+            <div class="content"> \
+            </div> \
+            <div class="footer"> \
+              <a href="#" class="close"> \
+                <img src="'+$.facebox.settings.imagePath+$.facebox.settings.closeImage+'" title="close" class="close_image" /> \
+              </a> \
+            </div> \
+          </td> \
+          <td class="b"/> \
+        </tr> \
+        <tr> \
+          <td class="bl"/><td class="b"/><td class="br"/> \
+        </tr> \
+      </tbody> \
+    </table> \
+  </div> \
+</div>'
     },
 
     loading: function() {
@@ -124,7 +128,7 @@
 
       $('#facebox .content').empty()
       $('#facebox .body').children().hide().end().
-        append('<div class="loading"><img src="'+$.facebox.settings.loadingImage+'"/></div>')
+        append('<div class="loading"><img src="'+$.facebox.settings.imagePath+$.facebox.settings.loadingImage+'"/></div>')
 
       $('#facebox').css({
         top:	getPageScroll()[1] + (getPageHeight() / 10),
@@ -192,11 +196,12 @@
     $.facebox.settings.imageTypesRegexp = new RegExp('\.(' + imageTypes + ')$', 'i')
 
     if (settings) $.extend($.facebox.settings, settings)
-    $('body').append($.facebox.settings.faceboxHtml)
+    $('body').append($.facebox.html())
 
     var preload = [ new Image(), new Image() ]
-    preload[0].src = $.facebox.settings.closeImage
-    preload[1].src = $.facebox.settings.loadingImage
+    var path = $.facebox.settings.imagePath
+    preload[0].src = path + $.facebox.settings.closeImage
+    preload[1].src = path + $.facebox.settings.loadingImage
 
     $('#facebox').find('.b:first, .bl, .br, .tl, .tr').each(function() {
       preload.push(new Image())
@@ -204,7 +209,6 @@
     })
 
     $('#facebox .close').click($.facebox.close)
-    $('#facebox .close_image').attr('src', $.facebox.settings.closeImage)
   }
   
   // getPageScroll() by quirksmode.com
