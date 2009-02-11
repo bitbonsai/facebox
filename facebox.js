@@ -81,6 +81,7 @@
    */
 
   $.extend($.facebox, {
+    //possible option: noAutoload --- will build facebox only when it is needed
     settings: {
       opacity      : 0,
       overlay      : true,
@@ -163,10 +164,11 @@
    */
 
   $.fn.facebox = function(settings) {
-    init(settings)
+    merge_settings(settings)
+    if(!settings.noAutoload)init()
 
-    function clickHandler() {
-      $.facebox.loading(true)
+    return this.bind('click.facebox',function(){
+      $.facebox.loading()
 
       // support for rel="facebox.inline_popup" syntax, to add a class
       // also supports deprecated "facebox[.inline_popup]" syntax
@@ -175,18 +177,20 @@
 
       fillFaceboxFromHref(this.href, klass)
       return false
-    }
-
-    return this.bind('click.facebox', clickHandler)
+    })
   }
 
   /*
    * Private methods
    */
 
+  function merge_settings(settings){
+    $.extend($.facebox.settings, settings)
+  }
+
   // called one time to setup facebox on this page
-  function init(settings) {
-    if ($.facebox.settings.inited) return true
+  function init() {
+    if ($.facebox.settings.inited) return
     else $.facebox.settings.inited = true
 
     $(document).trigger('init.facebox')
@@ -195,9 +199,12 @@
     var imageTypes = $.facebox.settings.imageTypes.join('|')
     $.facebox.settings.imageTypesRegexp = new RegExp('\.(' + imageTypes + ')$', 'i')
 
-    if (settings) $.extend($.facebox.settings, settings)
     $('body').append($.facebox.html())
+    if(! $.facebox.settings.noAutoload)preloadImages()
+    $('#facebox .close').click($.facebox.close)
+  }
 
+  function preloadImages(){
     var preload = [ new Image(), new Image() ]
     var path = $.facebox.settings.imagePath
     preload[0].src = path + $.facebox.settings.closeImage
@@ -207,10 +214,8 @@
       preload.push(new Image())
       preload.slice(-1).src = $(this).css('background-image').replace(/url\((.+)\)/, '$1')
     })
-
-    $('#facebox .close').click($.facebox.close)
   }
-  
+
   // getPageScroll() by quirksmode.com
   function getPageScroll() {
     var xScroll, yScroll;
