@@ -124,14 +124,15 @@
 
     loading: function() {
       init()
-      if ($('#facebox .loading').length == 1) return true
+      var $f = $('#facebox')
+      if ($f.find('.loading').length == 1) return true
       showOverlay()
 
-      $('#facebox .content').empty()
-      $('#facebox .body').children().hide().end().
+      $f.find('.content').empty()
+      $f.find('.body').children().hide().end().
         append('<div class="loading"><img src="'+$.facebox.settings.imagePath+$.facebox.settings.loadingImage+'"/></div>')
 
-      $('#facebox').css({
+      $f.css({
         top:	getPageScroll()[1] + (getPageHeight() / 10),
         left:	$(window).width() / 2 - 205 
       }).show()
@@ -145,11 +146,12 @@
 
     reveal: function(data, klass) {
       $(document).trigger('beforeReveal.facebox')
+      var $f = $('#facebox')
       if (klass) $('#facebox .content').addClass(klass)
-      $('#facebox .content').append(data)
-      $('#facebox .loading').remove()
-      $('#facebox .body').children().fadeIn('normal')
-      $('#facebox').css('left', $(window).width() / 2 - ($('#facebox table').width() / 2))
+      $f.find('.content').append(data)
+      $f.find('.loading').remove()
+      $f.find('.body').children().fadeIn('normal')
+      $f.css('left', $(window).width() / 2 - ($('#facebox table').width() / 2))
       $(document).trigger('reveal.facebox').trigger('afterReveal.facebox')
     },
 
@@ -309,9 +311,9 @@
     if (skipOverlay()) return
 
     $('#facebox_overlay').fadeOut(200, function(){
-      $("#facebox_overlay").removeClass("facebox_overlayBG")
-      $("#facebox_overlay").addClass("facebox_hide") 
-      $("#facebox_overlay").remove()
+      $("#facebox_overlay").removeClass("facebox_overlayBG").
+        addClass("facebox_hide").
+        remove()
     })
     
     return false
