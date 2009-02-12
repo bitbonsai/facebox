@@ -14,4 +14,5 @@ Options
     noAutoload   : false #do not generate facebox box at start, saves time (use when infrequently used)
     opacity      : 0
     overlay      : true
+    modal        : false #do not allow the user to dismiss the dialog
     imageTypes   : [ 'png', 'jpg', 'jpeg', 'gif' ]
