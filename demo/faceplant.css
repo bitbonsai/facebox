@@ -152,3 +152,11 @@ textarea {
 #facebox .br {
   background:url(../images/br.png);
 }
+
+#facebox .close {
+  background-image: url(../images/closelabel.gif);
+}
+
+#facebox .loading {
+  background-image: url(../images/loading.gif);
+}

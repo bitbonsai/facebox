@@ -18,6 +18,22 @@
   background:url(/images/facebox/br.png);
 }
 
+#facebox .close {
+  float: right;
+  display: block;
+  width: 66px;
+  height: 22px;
+  background: url('/images/facebox/closelabel.gif') no-repeat;
+}
+ 
+#facebox .loading {
+  margin: 0 auto;
+  width: 32px;
+  height: 32px;
+  background: url('/images/facebox/loading.gif') no-repeat;
+  text-align: center;
+}
+
 #facebox {
   position: absolute;
   top: 0;

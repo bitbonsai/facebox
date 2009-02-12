@@ -85,9 +85,6 @@
     settings: {
       opacity      : 0,
       overlay      : true,
-      imagePath    : '/images/facebox/',
-      loadingImage : 'loading.gif',
-      closeImage   : 'closelabel.gif',
       imageTypes   : [ 'png', 'jpg', 'jpeg', 'gif' ]
     },
 
@@ -106,9 +103,7 @@
             <div class="content"> \
             </div> \
             <div class="footer"> \
-              <a href="#" class="close"> \
-                <img src="'+$.facebox.settings.imagePath+$.facebox.settings.closeImage+'" title="close" class="close_image" /> \
-              </a> \
+              <a href="#" class="close"></a>\
             </div> \
           </td> \
           <td class="b"/> \
@@ -139,7 +134,7 @@
       var $f = $('#facebox')
       $f.find('.content').empty()
       $f.find('.body').children().hide().end().
-        append('<div class="loading"><img src="'+$.facebox.settings.imagePath+$.facebox.settings.loadingImage+'"/></div>')
+        append('<div class="loading"></div>')
 
       $f.css({
         top:	getPageScroll()[1] + (getPageHeight() / 10),
@@ -210,12 +205,7 @@
   }
 
   function preloadImages(){
-    var preload = [ new Image(), new Image() ]
-    var path = $.facebox.settings.imagePath
-    preload[0].src = path + $.facebox.settings.closeImage
-    preload[1].src = path + $.facebox.settings.loadingImage
-
-    $('#facebox').find('.b:first, .bl, .br, .tl, .tr').each(function() {
+    $('#facebox').find('.b:first, .loading, .close , .bl, .br, .tl, .tr').each(function() {
       preload.push(new Image())
       preload.slice(-1).src = $(this).css('background-image').replace(/url\((.+)\)/, '$1')
     })
@@ -254,8 +244,6 @@
   function makeCompatible() {
     var $s = $.facebox.settings
 
-    $s.loadingImage = $s.loading_image || $s.loadingImage
-    $s.closeImage = $s.close_image || $s.closeImage
     $s.imageTypes = $s.image_types || $s.imageTypes
     $s.faceboxHtml = $s.facebox_html || $s.faceboxHtml
   }

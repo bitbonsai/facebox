@@ -10,7 +10,4 @@ Options
     noAutoload   : false #do not generate facebox box at start, saves time (use when infrequently used)
     opacity      : 0
     overlay      : true
-    imagePath    : '/images/facebox/'
-    loadingImage : 'loading.gif'
-    closeImage   : 'closelabel.gif'
     imageTypes   : [ 'png', 'jpg', 'jpeg', 'gif' ]
