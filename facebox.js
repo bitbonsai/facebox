@@ -164,8 +164,8 @@
    */
 
   $.fn.facebox = function(settings) {
-    merge_settings(settings)
-    if(!settings.noAutoload)init()
+    if(settings)$.extend($.facebox.settings, settings)
+    if(!$.facebox.settings)init()
 
     return this.bind('click.facebox',function(){
       $.facebox.loading()
@@ -183,11 +183,6 @@
   /*
    * Private methods
    */
-
-  function merge_settings(settings){
-    $.extend($.facebox.settings, settings)
-  }
-
   // called one time to setup facebox on this page
   function init() {
     if ($.facebox.settings.inited) return
@@ -206,8 +201,8 @@
 
   function preloadImages(){
     $('#facebox').find('.b:first, .loading, .close , .bl, .br, .tl, .tr').each(function() {
-      preload.push(new Image())
-      preload.slice(-1).src = $(this).css('background-image').replace(/url\((.+)\)/, '$1')
+      var img = new Image()
+      img.src = $(this).css('background-image').replace(/url\((.+)\)/, '$1')
     })
   }
 
