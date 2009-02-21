@@ -160,3 +160,11 @@ textarea {
 #facebox .loading {
   background-image: url(../images/loading.gif);
 }
+
+#facebox .next {
+  background:url(../images/next.png);
+}
+
+#facebox .prev {
+  background:url(../images/prev.png);
+}

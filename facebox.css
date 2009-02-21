@@ -18,14 +18,34 @@
   background:url(/images/facebox/br.png);
 }
 
+#facebox .next {
+  background:url(/images/facebox/next.png);
+}
+
+#facebox .prev {
+  background:url(/images/facebox/prev.png);
+}
+
 #facebox .close {
+  background: url('/images/facebox/closelabel.gif') no-repeat;
   float: right;
   display: block;
   width: 66px;
   height: 22px;
-  background: url('/images/facebox/closelabel.gif') no-repeat;
 }
- 
+
+#facebox .prev, #facebox .next{
+  display:block;
+  float:left;
+  width: 20px;
+  height: 22px;
+}
+
+#facebox .navigation .counter{
+  float: left;
+  padding: 3px 5px;
+}
+
 #facebox .loading {
   margin: 0 auto;
   width: 32px;
@@ -78,7 +98,6 @@
   border-top: 1px solid #DDDDDD;
   padding-top: 5px;
   margin-top: 10px;
-  text-align: right;
 }
 
 #facebox .footer img {

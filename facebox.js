@@ -45,6 +45,8 @@
  *    jQuery.facebox({ ajax: 'remote.html' })
  *    jQuery.facebox({ ajax: 'remote.html' }, 'my-groovy-style')
  *    jQuery.facebox({ image: 'stairs.jpg' })
+ *    jQuery.facebox({ images: ['stairs.jpg','ballon.jpg'] })
+ *    jQuery.facebox({ images: ['stairs.jpg','ballon.jpg'], initial:'ballon.jpg'})
  *    jQuery.facebox({ image: 'stairs.jpg' }, 'my-groovy-style')
  *    jQuery.facebox({ div: '#box' })
  *    jQuery.facebox({ div: '#box' }, 'my-groovy-style')
@@ -71,6 +73,7 @@
 
     if (data.ajax) fillFaceboxFromAjax(data.ajax, klass)
     else if (data.image) fillFaceboxFromImage(data.image, klass)
+    else if (data.images) fillFaceboxFromGallery(data.images, klass, data.initial)
     else if (data.div) fillFaceboxFromHref(data.div, klass)
     else if ($.isFunction(data)) data.call($)
     else $.facebox.reveal(data, klass)
@@ -275,6 +278,38 @@
   }
 
   function fillFaceboxFromImage(href, klass) {
+    revealImage(href,klass)
+  }
+
+  function fillFaceboxFromGallery(hrefs, klass, initial) {
+    //initial position
+    var position=$.inArray(initial||0,hrefs);
+    if(position==-1)position=0;
+    
+    //build navigation and ensure it will be removed
+    $('#facebox div.footer').append($('<div class="navigation"><a class="prev"/><div class="counter"></div><a class="next"/></div>'));
+    var $nav = $('#facebox .navigation');
+    $(document).bind('afterClose.facebox',function(){$nav.remove()})
+
+    function change_image(diff){
+      position = (position + diff + hrefs.length) % hrefs.length
+      revealImage(hrefs[position],klass)
+      $nav.find('.counter').html(position+1+" / "+hrefs.length)
+    }
+    change_image(0);
+
+    //bind events
+    $('.prev',$nav).click(function(){change_image(-1)})
+    $('.next',$nav).click(function(){change_image(1)})
+    $(document).bind('keydown.facebox', function(e) {
+      if(e.keyCode == 39)change_image(1)  // right
+      if(e.keyCode == 37)change_image(-1) // left
+    });
+  }
+
+  function revealImage(href,klass){
+    $('#facebox .content').empty();
+    $.facebox.loading();
     var image = new Image()
     image.onload = function() {
       $.facebox.reveal('<div class="image"><img src="' + image.src + '" /></div>', klass)
@@ -329,7 +364,7 @@
       hideOverlay()
       $('#facebox .loading').remove()
     })
-    $(document).trigger('afterClose.facebox')    
+    $(document).trigger('afterClose.facebox')
   })
 
 })(jQuery);
