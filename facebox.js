@@ -72,10 +72,10 @@
   $.facebox = function(data, klass) {
     $.facebox.loading();
     $.facebox.content_klass = klass;
-    if (data.ajax) fillFaceboxFromAjax(data.ajax);
-    else if(data.image) fillFaceboxFromImage(data.image);
-    else if(data.images) fillFaceboxFromGallery(data.images,data.initial);
-    else if(data.div) fillFaceboxFromHref(data.div);
+    if (data.ajax) revealAjax(data.ajax);
+    else if(data.image) revealImage(data.image);
+    else if(data.images) revealGallery(data.images,data.initial);
+    else if(data.div) revealHref(data.div);
     else if($.isFunction(data)) data.call($);
     else $.facebox.reveal(data);
   }
@@ -184,7 +184,7 @@
       // also supports deprecated "facebox[.inline_popup]" syntax
       var klass = this.rel.match(/facebox\[?\.(\w+)\]?/);
       $.facebox.content_klass = klass ? klass[1] : '';
-      fillFaceboxFromHref(this.href);
+      revealHref(this.href);
       return false
     })
   }
@@ -229,7 +229,7 @@
   //     div: #id
   //   image: blah.extension
   //    ajax: anything else
-  function fillFaceboxFromHref(href) {
+  function revealHref(href) {
     // div
     if(href.match(/#/)) {
       var url    = window.location.href.split('#')[0];
@@ -237,17 +237,12 @@
       $.facebox.reveal($(target).show().replaceWith("<div id='facebox_moved'></div>"), $.facebox.content_klass);
     // image
     } else if(href.match($.facebox.settings.imageTypesRegexp)) {
-      fillFaceboxFromImage(href);
+      revealImage(href);
     // ajax
-    } else { fillFaceboxFromAjax(href)}
+    } else { revealAjax(href)}
   }
 
-  //TODO remove redirect...
-  function fillFaceboxFromImage(href) {
-    revealImage(href)
-  }
-
-  function fillFaceboxFromGallery(hrefs, initial) {
+  function revealGallery(hrefs, initial) {
     //initial position
     var position=$.inArray(initial||0,hrefs);
     if(position==-1)position=0;
@@ -283,7 +278,7 @@
     image.src = href;
   }
 
-  function fillFaceboxFromAjax(href) {
+  function revealAjax(href) {
     $.get(href, function(data) { $.facebox.reveal(data) });
   }
 
