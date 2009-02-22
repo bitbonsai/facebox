@@ -155,8 +155,9 @@
     reveal: function(content){
       $(document).trigger('beforeReveal.facebox');
       var $f = $('#facebox');
-      $('.content',$f).addClass($.facebox.content_klass||'');
-      $('.content',$f).html(content);
+      $('.content',$f)
+        .attr('class',($.facebox.content_klass||'')+' content')//do not simply add the new class, since on the next call the old classes would remain
+        .html(content);
       $('.loading',$f).remove();
       $('.body',$f).children().fadeIn('normal');
       $f.css('left', $(window).width() / 2 - ($('#facebox table').width() / 2));
@@ -269,6 +270,7 @@
   }
 
   function revealImage(href){
+    $('#facebox .content').empty();
     $.facebox.loading();
     var image = new Image();
     image.onload = function() {
@@ -318,8 +320,8 @@
   $(document).bind('close.facebox', function() {
     $(document).unbind('keydown.facebox');
     $('#facebox').fadeOut(function() {
-      if ($('#facebox_moved').length == 0) $('#facebox .content').removeClass().addClass('content');
-      else $('#facebox_moved').replaceWith($('#facebox .content').children().hide());
+      //revert moving content
+      $('#facebox_moved').replaceWith($('#facebox .content').children().hide());
       hideOverlay();
       $('#facebox .loading').remove();
     })
