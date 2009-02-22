@@ -122,53 +122,51 @@
     },
 
     loading: function() {
-      init()
-      var $f = $('#facebox')
-      if ($f.find('.loading').length == 1) return true
-      showOverlay()
-      $.facebox.wait()
+      init();
+      var $f = $('#facebox');
+      if ($f.find('.loading').length == 1) return true;
+      showOverlay();
+      $.facebox.wait();
       if (!$.facebox.settings.modal) {
         $(document).bind('keydown.facebox', function(e) {
-          if (e.keyCode == 27) {
-            $.facebox.close()
-          }
-          return true
-        })
+          if(e.keyCode == 27) $.facebox.close();
+          return true;
+        });
       }
-      $(document).trigger('loading.facebox')
+      $(document).trigger('loading.facebox');
     },
 
     wait: function() {
-      var $f = $('#facebox')
-      $f.find('.content').empty()
+      var $f = $('#facebox');
+      $f.find('.content').empty();
       $f.find('.body').children().hide().end().
-        append('<div class="loading"></div>')
+        append('<div class="loading"></div>');
       $.facebox.centralize();
       $f.show();
-      $(document).trigger('reveal.facebox').trigger('afterReveal.facebox')
+      $(document).trigger('reveal.facebox').trigger('afterReveal.facebox');
     },
 
     centralize: function(){
       $('#facebox').css({
         top:	getPageScroll()[1] + (getPageHeight() / 10),
         left: $(window).width() / 2 - ($('#facebox table').width() / 2)
-      })
+      });
     },
 
     reveal: function(data, klass) {
-      $(document).trigger('beforeReveal.facebox')
-      var $f = $('#facebox')
-      if (klass) $('#facebox .content').addClass(klass)
-      $f.find('.content').append(data)
-      $f.find('.loading').remove()
-      $f.find('.body').children().fadeIn('normal')
-      $f.css('left', $(window).width() / 2 - ($('#facebox table').width() / 2))
-      $(document).trigger('reveal.facebox').trigger('afterReveal.facebox')
+      $(document).trigger('beforeReveal.facebox');
+      var $f = $('#facebox');
+      if(klass)$('.content',$f).addClass(klass);
+      $('.content',$f).append(data);
+      $('.loading',$f).remove();
+      $('.body',$f).children().fadeIn('normal');
+      $f.css('left', $(window).width() / 2 - ($('#facebox table').width() / 2));
+      $(document).trigger('reveal.facebox').trigger('afterReveal.facebox');
     },
 
     close: function() {
-      $(document).trigger('close.facebox')
-      return false
+      $(document).trigger('close.facebox');
+      return false;
     }
   })
 
@@ -177,18 +175,18 @@
    */
 
   $.fn.facebox = function(settings) {
-    if(settings)$.extend($.facebox.settings, settings)
-    if(!$.facebox.settings)init()
+    if(settings)$.extend($.facebox.settings, settings);
+    if(!$.facebox.settings.noAutoload) init();
 
     return this.bind('click.facebox',function(){
-      $.facebox.loading()
+      $.facebox.loading();
 
       // support for rel="facebox.inline_popup" syntax, to add a class
       // also supports deprecated "facebox[.inline_popup]" syntax
-      var klass = this.rel.match(/facebox\[?\.(\w+)\]?/)
-      if (klass) klass = klass[1]
-
-      fillFaceboxFromHref(this.href, klass)
+      var klass = this.rel.match(/facebox\[?\.(\w+)\]?/);
+      if(klass) klass = klass[1];
+      //TODO refactor to settings.content_klass
+      fillFaceboxFromHref(this.href, klass);
       return false
     })
   }
@@ -198,30 +196,33 @@
    */
   // called one time to setup facebox on this page
   function init() {
-    if ($.facebox.settings.inited) return
-    else $.facebox.settings.inited = true
+    if($.facebox.settings.inited) return;
+    else $.facebox.settings.inited = true;
 
-    $(document).trigger('init.facebox')
-    makeCompatible()
+    $(document).trigger('init.facebox');
+    makeCompatible();
 
-    var imageTypes = $.facebox.settings.imageTypes.join('|')
-    $.facebox.settings.imageTypesRegexp = new RegExp('\.(' + imageTypes + ')$', 'i')
+    var imageTypes = $.facebox.settings.imageTypes.join('|');
+    $.facebox.settings.imageTypesRegexp = new RegExp('\.(' + imageTypes + ')$', 'i');
 
-    $('body').append($.facebox.html())
-    if(! $.facebox.settings.noAutoload)preloadImages()
-    $('#facebox .close').click($.facebox.close)
+    $('body').append($.facebox.html());
+    //if we did not autoload, so the user has just clicked the facebox and pre-loading is useless
+    if(! $.facebox.settings.noAutoload)preloadImages();
+    $('#facebox .close').click($.facebox.close);
   }
 
   function preloadImages(){
+    //TODO preload prev/next ?
     $('#facebox').find('.b:first, .loading, .close , .bl, .br, .tl, .tr').each(function() {
-      var img = new Image()
-      img.src = $(this).css('background-image').replace(/url\((.+)\)/, '$1')
+      var img = new Image();
+      img.src = $(this).css('background-image').replace(/url\((.+)\)/, '$1');
     })
   }
 
   // getPageScroll() by quirksmode.com
   function getPageScroll() {
     var xScroll, yScroll;
+    //TODO replaceable with $(window).scrollTop() / $(window).scrollLeft() ?
     if (self.pageYOffset) {
       yScroll = self.pageYOffset;
       xScroll = self.pageXOffset;
@@ -232,12 +233,13 @@
       yScroll = document.body.scrollTop;
       xScroll = document.body.scrollLeft;	
     }
-    return new Array(xScroll,yScroll) 
+    return new Array(xScroll,yScroll);
   }
 
   // Adapted from getPageSize() by quirksmode.com
   function getPageHeight() {
-    var windowHeight
+    //TODO replace with $(window).height() ?
+    var windowHeight;
     if (self.innerHeight) {	// all except Explorer
       windowHeight = self.innerHeight;
     } else if (document.documentElement && document.documentElement.clientHeight) { // Explorer 6 Strict Mode
@@ -250,10 +252,9 @@
 
   // Backwards compatibility
   function makeCompatible() {
-    var $s = $.facebox.settings
-
-    $s.imageTypes = $s.image_types || $s.imageTypes
-    $s.faceboxHtml = $s.facebox_html || $s.faceboxHtml
+    var $s = $.facebox.settings;
+    $s.imageTypes = $s.image_types || $s.imageTypes;
+    $s.faceboxHtml = $s.facebox_html || $s.faceboxHtml;
   }
 
   // Figures out what you want to display and displays it
@@ -263,18 +264,15 @@
   //    ajax: anything else
   function fillFaceboxFromHref(href, klass) {
     // div
-    if (href.match(/#/)) {
-      var url    = window.location.href.split('#')[0]
-      var target = href.replace(url,'')
-      $.facebox.reveal($(target).show().replaceWith("<div id='facebox_moved'></div>"), klass)
-
+    if(href.match(/#/)) {
+      var url    = window.location.href.split('#')[0];
+      var target = href.replace(url,'');
+      $.facebox.reveal($(target).show().replaceWith("<div id='facebox_moved'></div>"), klass);
     // image
-    } else if (href.match($.facebox.settings.imageTypesRegexp)) {
-      fillFaceboxFromImage(href, klass)
+    } else if(href.match($.facebox.settings.imageTypesRegexp)) {
+      fillFaceboxFromImage(href, klass);
     // ajax
-    } else {
-      fillFaceboxFromAjax(href, klass)
-    }
+    } else { fillFaceboxFromAjax(href, klass)}
   }
 
   function fillFaceboxFromImage(href, klass) {
@@ -289,67 +287,66 @@
     //build navigation and ensure it will be removed
     $('#facebox div.footer').append($('<div class="navigation"><a class="prev"/><div class="counter"></div><a class="next"/></div>'));
     var $nav = $('#facebox .navigation');
-    $(document).bind('afterClose.facebox',function(){$nav.remove()})
+    $(document).bind('afterClose.facebox',function(){$nav.remove()});
 
     function change_image(diff){
-      position = (position + diff + hrefs.length) % hrefs.length
-      revealImage(hrefs[position],klass)
-      $nav.find('.counter').html(position+1+" / "+hrefs.length)
+      position = (position + diff + hrefs.length) % hrefs.length;
+      revealImage(hrefs[position],klass);
+      $nav.find('.counter').html(position+1+" / "+hrefs.length);
     }
     change_image(0);
 
     //bind events
-    $('.prev',$nav).click(function(){change_image(-1)})
-    $('.next',$nav).click(function(){change_image(1)})
+    $('.prev',$nav).click(function(){change_image(-1)});
+    $('.next',$nav).click(function(){change_image(1)});
     $(document).bind('keydown.facebox', function(e) {
-      if(e.keyCode == 39)change_image(1)  // right
-      if(e.keyCode == 37)change_image(-1) // left
+      if(e.keyCode == 39)change_image(1);  // right
+      if(e.keyCode == 37)change_image(-1); // left
     });
   }
 
   function revealImage(href,klass){
     $('#facebox .content').empty();
     $.facebox.loading();
-    var image = new Image()
+    var image = new Image();
     image.onload = function() {
       $.facebox.reveal('<div class="image"><img src="' + image.src + '" /></div>', klass)
     }
-    image.src = href
+    image.src = href;
   }
 
   function fillFaceboxFromAjax(href, klass) {
-    $.get(href, function(data) { $.facebox.reveal(data, klass) })
+    $.get(href, function(data) { $.facebox.reveal(data, klass) });
   }
 
   function skipOverlay() {
-    return $.facebox.settings.overlay == false || $.facebox.settings.opacity === null 
+    return $.facebox.settings.overlay == false || $.facebox.settings.opacity === null
   }
 
   function showOverlay() {
-    if (skipOverlay()) return
+    if(skipOverlay()) return;
 
-    if ($('#facebox_overlay').length == 0) 
-      $("body").append('<div id="facebox_overlay" class="facebox_hide"></div>')
+    if($('#facebox_overlay').length == 0) 
+      $("body").append('<div id="facebox_overlay" class="facebox_hide"></div>');
 
     $('#facebox_overlay').hide().addClass("facebox_overlayBG")
       .css('opacity', $.facebox.settings.opacity)
-      .fadeIn(200)
-    if (!$.facebox.settings.modal){
-      $('#facebox_overlay').click(function() { $(document).trigger('close.facebox') })
+      .fadeIn(200);
+    if(!$.facebox.settings.modal){
+      $('#facebox_overlay').click(function(){ $(document).trigger('close.facebox')})
     }
-    return false
+    return false;
   }
 
   function hideOverlay() {
-    if (skipOverlay()) return
+    if(skipOverlay()) return;
 
     $('#facebox_overlay').fadeOut(200, function(){
       $("#facebox_overlay").removeClass("facebox_overlayBG").
         addClass("facebox_hide").
-        remove()
+        remove();
     })
-    
-    return false
+    return false;
   }
 
   /*
@@ -357,14 +354,14 @@
    */
 
   $(document).bind('close.facebox', function() {
-    $(document).unbind('keydown.facebox')
+    $(document).unbind('keydown.facebox');
     $('#facebox').fadeOut(function() {
-      if ($('#facebox_moved').length == 0) $('#facebox .content').removeClass().addClass('content')
-      else $('#facebox_moved').replaceWith($('#facebox .content').children().hide())
-      hideOverlay()
-      $('#facebox .loading').remove()
+      if ($('#facebox_moved').length == 0) $('#facebox .content').removeClass().addClass('content');
+      else $('#facebox_moved').replaceWith($('#facebox .content').children().hide());
+      hideOverlay();
+      $('#facebox .loading').remove();
     })
-    $(document).trigger('afterClose.facebox')
-  })
+    $(document).trigger('afterClose.facebox');
+  });
 
 })(jQuery);
