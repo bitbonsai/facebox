@@ -81,6 +81,29 @@
         </div>
 
         <div class="example">
+          <h2>Galleries</h2>
+
+          <p>
+            <a id="open_gallery">open gallery</a>
+            you can navigate by left-arrow/right-arrow too
+          </p>
+          <script>
+            jQuery('#open_gallery').click(function(){
+              jQuery.facebox({images:['demo/stairs.jpg','demo/logo.png']})
+            });
+          </script>
+          <div class="code">
+            <h3>The Code</h3>
+            <code>
+            <pre>
+jQuery('#open_gallery').click(function(){
+  jQuery.facebox({images:['demo/stairs.jpg','demo/logo.png']})
+});            </pre>
+            </code>
+          </div>
+        </div>
+
+        <div class="example">
           <h2>Divs</h2>
 
           <p> <a href="#info" rel="facebox">View the 'info' div in the Facebox</a> </p>
