@@ -152,11 +152,11 @@
       });
     },
 
-    reveal: function(data){
+    reveal: function(content){
       $(document).trigger('beforeReveal.facebox');
       var $f = $('#facebox');
       $('.content',$f).addClass($.facebox.content_klass||'');
-      $('.content',$f).append(data);
+      $('.content',$f).html(content);
       $('.loading',$f).remove();
       $('.body',$f).children().fadeIn('normal');
       $f.css('left', $(window).width() / 2 - ($('#facebox table').width() / 2));
@@ -269,7 +269,6 @@
   }
 
   function revealImage(href){
-    $('#facebox .content').empty();
     $.facebox.loading();
     var image = new Image();
     image.onload = function() {
