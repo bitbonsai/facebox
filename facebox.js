@@ -148,7 +148,7 @@
 
     centralize: function(){
       $('#facebox').css({
-        top:	getPageScroll()[1] + (getPageHeight() / 10),
+        top:	$(window).scrollTop() + ($(window).height() / 10),
         left: $(window).width() / 2 - ($('#facebox table').width() / 2)
       });
     },
@@ -217,37 +217,6 @@
       var img = new Image();
       img.src = $(this).css('background-image').replace(/url\((.+)\)/, '$1');
     })
-  }
-
-  // getPageScroll() by quirksmode.com
-  function getPageScroll() {
-    var xScroll, yScroll;
-    //TODO replaceable with $(window).scrollTop() / $(window).scrollLeft() ?
-    if (self.pageYOffset) {
-      yScroll = self.pageYOffset;
-      xScroll = self.pageXOffset;
-    } else if (document.documentElement && document.documentElement.scrollTop) {	 // Explorer 6 Strict
-      yScroll = document.documentElement.scrollTop;
-      xScroll = document.documentElement.scrollLeft;
-    } else if (document.body) {// all other Explorers
-      yScroll = document.body.scrollTop;
-      xScroll = document.body.scrollLeft;	
-    }
-    return new Array(xScroll,yScroll);
-  }
-
-  // Adapted from getPageSize() by quirksmode.com
-  function getPageHeight() {
-    //TODO replace with $(window).height() ?
-    var windowHeight;
-    if (self.innerHeight) {	// all except Explorer
-      windowHeight = self.innerHeight;
-    } else if (document.documentElement && document.documentElement.clientHeight) { // Explorer 6 Strict Mode
-      windowHeight = document.documentElement.clientHeight;
-    } else if (document.body) { // other Explorers
-      windowHeight = document.body.clientHeight;
-    }	
-    return windowHeight
   }
 
   // Backwards compatibility
