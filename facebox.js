@@ -68,15 +68,16 @@
  *
  */
 (function($) {
+  //TODO refactor using data.content_klass
   $.facebox = function(data, klass) {
-    $.facebox.loading()
-
-    if (data.ajax) fillFaceboxFromAjax(data.ajax, klass)
-    else if (data.image) fillFaceboxFromImage(data.image, klass)
-    else if (data.images) fillFaceboxFromGallery(data.images, klass, data.initial)
-    else if (data.div) fillFaceboxFromHref(data.div, klass)
-    else if ($.isFunction(data)) data.call($)
-    else $.facebox.reveal(data, klass)
+    $.facebox.loading();
+    $.facebox.content_klass = klass;
+    if (data.ajax) fillFaceboxFromAjax(data.ajax);
+    else if(data.image) fillFaceboxFromImage(data.image);
+    else if(data.images) fillFaceboxFromGallery(data.images,data.initial);
+    else if(data.div) fillFaceboxFromHref(data.div);
+    else if($.isFunction(data)) data.call($);
+    else $.facebox.reveal(data);
   }
 
   /*
@@ -123,14 +124,12 @@
 
     loading: function() {
       init();
-      var $f = $('#facebox');
-      if ($f('.loading',$f).length == 1) return true;
+      if($('.loading',$('#facebox'))[0]) return true;
       showOverlay();
       $.facebox.wait();
       if (!$.facebox.settings.modal) {
         $(document).bind('keydown.facebox', function(e) {
-          if(e.keyCode == 27) $.facebox.close();
-          return true;
+          if(e.keyCode == 27) $.facebox.close();//ESC
         });
       }
       $(document).trigger('loading.facebox');
@@ -153,10 +152,10 @@
       });
     },
 
-    reveal: function(data, klass) {
+    reveal: function(data){
       $(document).trigger('beforeReveal.facebox');
       var $f = $('#facebox');
-      if(klass)$('.content',$f).addClass(klass);
+      $('.content',$f).addClass($.facebox.content_klass||'');
       $('.content',$f).append(data);
       $('.loading',$f).remove();
       $('.body',$f).children().fadeIn('normal');
@@ -184,9 +183,8 @@
       // support for rel="facebox.inline_popup" syntax, to add a class
       // also supports deprecated "facebox[.inline_popup]" syntax
       var klass = this.rel.match(/facebox\[?\.(\w+)\]?/);
-      if(klass) klass = klass[1];
-      //TODO refactor to settings.content_klass
-      fillFaceboxFromHref(this.href, klass);
+      $.facebox.content_klass = klass ? klass[1] : '';
+      fillFaceboxFromHref(this.href);
       return false
     })
   }
@@ -231,24 +229,25 @@
   //     div: #id
   //   image: blah.extension
   //    ajax: anything else
-  function fillFaceboxFromHref(href, klass) {
+  function fillFaceboxFromHref(href) {
     // div
     if(href.match(/#/)) {
       var url    = window.location.href.split('#')[0];
       var target = href.replace(url,'');
-      $.facebox.reveal($(target).show().replaceWith("<div id='facebox_moved'></div>"), klass);
+      $.facebox.reveal($(target).show().replaceWith("<div id='facebox_moved'></div>"), $.facebox.content_klass);
     // image
     } else if(href.match($.facebox.settings.imageTypesRegexp)) {
-      fillFaceboxFromImage(href, klass);
+      fillFaceboxFromImage(href);
     // ajax
-    } else { fillFaceboxFromAjax(href, klass)}
+    } else { fillFaceboxFromAjax(href)}
   }
 
-  function fillFaceboxFromImage(href, klass) {
-    revealImage(href,klass)
+  //TODO remove redirect...
+  function fillFaceboxFromImage(href) {
+    revealImage(href)
   }
 
-  function fillFaceboxFromGallery(hrefs, klass, initial) {
+  function fillFaceboxFromGallery(hrefs, initial) {
     //initial position
     var position=$.inArray(initial||0,hrefs);
     if(position==-1)position=0;
@@ -260,7 +259,7 @@
 
     function change_image(diff){
       position = (position + diff + hrefs.length) % hrefs.length;
-      revealImage(hrefs[position],klass);
+      revealImage(hrefs[position]);
       $nav.find('.counter').html(position+1+" / "+hrefs.length);
     }
     change_image(0);
@@ -274,18 +273,18 @@
     });
   }
 
-  function revealImage(href,klass){
+  function revealImage(href){
     $('#facebox .content').empty();
     $.facebox.loading();
     var image = new Image();
     image.onload = function() {
-      $.facebox.reveal('<div class="image"><img src="' + image.src + '" /></div>', klass)
+      $.facebox.reveal('<div class="image"><img src="' + image.src + '" /></div>', $.facebox.content_klass)
     }
     image.src = href;
   }
 
-  function fillFaceboxFromAjax(href, klass) {
-    $.get(href, function(data) { $.facebox.reveal(data, klass) });
+  function fillFaceboxFromAjax(href) {
+    $.get(href, function(data) { $.facebox.reveal(data) });
   }
 
   function skipOverlay() {
