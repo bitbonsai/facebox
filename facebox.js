@@ -124,7 +124,7 @@
     loading: function() {
       init();
       var $f = $('#facebox');
-      if ($f.find('.loading').length == 1) return true;
+      if ($f('.loading',$f).length == 1) return true;
       showOverlay();
       $.facebox.wait();
       if (!$.facebox.settings.modal) {
@@ -138,8 +138,8 @@
 
     wait: function() {
       var $f = $('#facebox');
-      $f.find('.content').empty();
-      $f.find('.body').children().hide().end().
+      $('.content',$f).empty();
+      $('.body',$f).children().hide().end().
         append('<div class="loading"></div>');
       $.facebox.centralize();
       $f.show();
