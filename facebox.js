@@ -11,9 +11,9 @@
  * Copyright 2007, 2008 Chris Wanstrath [ chris@ozmm.org ]
  *
  * Usage:
- *  
+ *
  *  jQuery(document).ready(function() {
- *    jQuery('a[rel*=facebox]').facebox() 
+ *    jQuery('a[rel*=facebox]').facebox()
  *  })
  *
  *  <a href="#terms" rel="facebox">Terms</a>
@@ -27,13 +27,13 @@
  *
  *
  *  You can also use it programmatically:
- * 
+ *
  *    jQuery.facebox('some html')
  *    jQuery.facebox('some html', 'my-groovy-style')
  *
  *  The above will open a facebox with "some html" as the content.
- *    
- *    jQuery.facebox(function($) { 
+ *
+ *    jQuery.facebox(function($) {
  *      $.get('blah.html', function(data) { $.facebox(data) })
  *    })
  *
@@ -41,7 +41,7 @@
  *  allowing for a better ajaxy experience.
  *
  *  The facebox function can also display an ajax page, an image, or the contents of a div:
- *  
+ *
  *    jQuery.facebox({ ajax: 'remote.html' })
  *    jQuery.facebox({ ajax: 'remote.html' }, 'my-groovy-style')
  *    jQuery.facebox({ image: 'stairs.jpg' })
@@ -175,6 +175,7 @@
    */
 
   $.fn.facebox = function(settings) {
+    if ($(this).length == 0) return;
     if(settings)$.extend($.facebox.settings, settings);
     if(!$.facebox.settings.noAutoload) init();
 
@@ -235,7 +236,7 @@
     if(href.match(/#/)) {
       var url    = window.location.href.split('#')[0];
       var target = href.replace(url,'');
-      $.facebox.reveal($(target).show().replaceWith("<div id='facebox_moved'></div>"), $.facebox.content_klass);
+      $.facebox.reveal($(target).clone().show(), $.facebox.content_klass);
     // image
     } else if(href.match($.facebox.settings.imageTypesRegexp)) {
       revealImage(href);
@@ -247,7 +248,7 @@
     //initial position
     var position=$.inArray(initial||0,hrefs);
     if(position==-1)position=0;
-    
+
     //build navigation and ensure it will be removed
     $('#facebox div.footer').append($('<div class="navigation"><a class="prev"/><div class="counter"></div><a class="next"/></div>'));
     var $nav = $('#facebox .navigation');
@@ -290,8 +291,9 @@
   function showOverlay() {
     if(skipOverlay()) return;
 
-    if($('#facebox_overlay').length == 0) 
+    if($('#facebox_overlay').length == 0){
       $("body").append('<div id="facebox_overlay" class="facebox_hide"></div>');
+    }
 
     $('#facebox_overlay').hide().addClass("facebox_overlayBG")
       .css('opacity', $.facebox.settings.opacity)
@@ -320,8 +322,7 @@
   $(document).bind('close.facebox', function() {
     $(document).unbind('keydown.facebox');
     $('#facebox').fadeOut(function() {
-      //revert moving content
-      $('#facebox_moved').replaceWith($('#facebox .content').children().hide());
+      $('#facebox .content').removeClass().addClass('content');//revert changing class
       hideOverlay();
       $('#facebox .loading').remove();
     })
