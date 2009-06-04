@@ -31,6 +31,11 @@ Options
     modal        : false #do not allow the user to dismiss the dialog
     imageTypes   : [ 'png', 'jpg', 'jpeg', 'gif' ]
 
+TODO
+====
+ - add modal mode demo
+ - show loading during whole Ajax/Images load
+
 Author
 ======
 Original: [defunkt](http://defunkt.github.com/)  

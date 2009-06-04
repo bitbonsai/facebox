@@ -122,9 +122,9 @@
 </div>'
     },
 
-    loading: function() {
+    loading: function(){
       init();
-      if($('.loading',$('#facebox'))[0]) return true;
+      if($('.loading',$('#facebox'))[0]) return;//already in loading state...
       showOverlay();
       $.facebox.wait();
       if (!$.facebox.settings.modal) {
@@ -135,11 +135,10 @@
       $(document).trigger('loading.facebox');
     },
 
-    wait: function() {
+    wait: function(){
       var $f = $('#facebox');
-      $('.content',$f).empty();
-      $('.body',$f).children().hide().end().
-        append('<div class="loading"></div>');
+      $('.content',$f).empty();//clear out old content
+      $('.body',$f).children().hide().end().append('<div class="loading"></div>');
       $.facebox.centralize();
       $f.show();
       $(document).trigger('reveal.facebox').trigger('afterReveal.facebox');
@@ -164,31 +163,32 @@
       $(document).trigger('reveal.facebox').trigger('afterReveal.facebox');
     },
 
-    close: function() {
+    close: function(){
       $(document).trigger('close.facebox');
       return false;
     }
   })
 
   /*
-   * Public, $.fn methods
+   * Bind to links, on click they open a facebox which
+   * contains what their href points to
    */
-
   $.fn.facebox = function(settings) {
-    if ($(this).length == 0) return;
+    var $this = $(this);
+    if(!$this[0]) return $this;//called on empty elements, just stop and continue chain
     if(settings)$.extend($.facebox.settings, settings);
     if(!$.facebox.settings.noAutoload) init();
 
-    return this.bind('click.facebox',function(){
+    $this.bind('click.facebox',function(){
       $.facebox.loading();
-
       // support for rel="facebox.inline_popup" syntax, to add a class
       // also supports deprecated "facebox[.inline_popup]" syntax
       var klass = this.rel.match(/facebox\[?\.(\w+)\]?/);
       $.facebox.content_klass = klass ? klass[1] : '';
       revealHref(this.href);
-      return false
-    })
+      return false;
+    });
+    return $this;//continue chain
   }
 
   /*
@@ -200,17 +200,19 @@
     else $.facebox.settings.inited = true;
 
     $(document).trigger('init.facebox');
-    makeCompatible();
+    makeBackwardsCompatible();
 
     var imageTypes = $.facebox.settings.imageTypes.join('|');
     $.facebox.settings.imageTypesRegexp = new RegExp('\.(' + imageTypes + ')$', 'i');
 
-    $('body').append($.facebox.html());
+    $('body').append($.facebox.html());//insert facebox to dom
+
     //if we did not autoload, so the user has just clicked the facebox and pre-loading is useless
     if(! $.facebox.settings.noAutoload)preloadImages();
     $('#facebox .close').click($.facebox.close);
   }
 
+  //preloads all the static facebox images
   function preloadImages(){
     //TODO preload prev/next ?
     $('#facebox').find('.b:first, .loading, .close , .bl, .br, .tl, .tr').each(function() {
@@ -219,8 +221,7 @@
     })
   }
 
-  // Backwards compatibility
-  function makeCompatible() {
+  function makeBackwardsCompatible() {
     var $s = $.facebox.settings;
     $s.imageTypes = $s.image_types || $s.imageTypes;
     $s.faceboxHtml = $s.facebox_html || $s.faceboxHtml;
@@ -273,7 +274,7 @@
 
   function revealImage(href){
     $('#facebox .content').empty();
-    $.facebox.loading();
+    $.facebox.loading();//TODO loading must be shown until image is loaded -> stopLoading() on onload
     var image = new Image();
     image.onload = function() {
       $.facebox.reveal('<div class="image"><img src="' + image.src + '" /></div>', $.facebox.content_klass)
@@ -281,6 +282,7 @@
     image.src = href;
   }
 
+  //TODO loading until content arrives
   function revealAjax(href) {
     $.get(href, function(data) { $.facebox.reveal(data) });
   }
@@ -302,7 +304,6 @@
     if(!$.facebox.settings.modal){
       $('#facebox_overlay').click(function(){ $(document).trigger('close.facebox')})
     }
-    return false;
   }
 
   function hideOverlay() {
@@ -313,7 +314,6 @@
         addClass("facebox_hide").
         remove();
     })
-    return false;
   }
 
   /*
